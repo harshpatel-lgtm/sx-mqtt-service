@@ -3,13 +3,15 @@ require('dotenv').config();
 module.exports = {
   aws: {
     region: process.env.AWS_REGION || 'us-east-1',
-    timestream: {
-      database: process.env.TIMESTREAM_DATABASE,
-      table: process.env.TIMESTREAM_TABLE,
-    },
     sqs: {
       dlqUrl: process.env.SQS_DLQ_URL,
     }
+  },
+  influx: {
+    url: process.env.INFLUX_URL,
+    token: process.env.INFLUX_TOKEN,
+    org: process.env.INFLUX_ORG,
+    bucket: process.env.INFLUX_BUCKET,
   },
   mqtt: {
     brokerUrl: process.env.MQTT_BROKER_URL,

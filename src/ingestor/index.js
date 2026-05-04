@@ -2,7 +2,7 @@ const config = require("../common/config");
 const logger = require("../common/logger");
 const { initMQTT } = require("./mqtt.service");
 const IngestionBuffer = require("./buffer");
-const { writeToTimestream } = require("./storage.service");
+const { writeToInflux, closeInflux } = require("./storage.service");
 
 logger.info("Starting SX MQTT Ingestion Service...");
 
@@ -15,6 +15,8 @@ const buffer = new IngestionBuffer(
       // await writeToTimestream(batch);
       logger.info(`[SAFE MODE] Would have written ${batch.length} records to Timestream:`);
       console.log(JSON.stringify(batch, null, 2));
+
+      // await writeToInflux(batch);
     } catch (err) {
       // In a more complex setup, we could implement local disk spillover here
       logger.error("Failed to process batch, records might be lost if DLQ failed.");
@@ -28,13 +30,20 @@ const mqttClient = initMQTT((data) => {
 });
 
 // Graceful Shutdown
-function shutdown() {
+async function shutdown() {
   logger.info("Shutting down gracefully...");
   mqttClient.end();
-  buffer.flush().then(() => {
-    logger.info("Buffer flushed. Exit.");
+  
+  try {
+    await buffer.flush();
+    logger.info("Buffer flushed.");
+    await closeInflux();
+  } catch (err) {
+    logger.error({ err }, "Error during shutdown");
+  } finally {
+    logger.info("Exit.");
     process.exit(0);
-  });
+  }
 }
 
 process.on("SIGTERM", shutdown);
