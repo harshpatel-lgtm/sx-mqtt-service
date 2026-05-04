@@ -3,8 +3,8 @@ module.exports = {
     {
       name: 'sx-mqtt-ingestor',
       script: './src/ingestor/index.js',
-      instances: 'max',
-      exec_mode: 'cluster',
+      instances: 1,
+      exec_mode: 'fork',
       env: {
         NODE_ENV: 'development',
       },
