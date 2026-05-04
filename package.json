@@ -1,0 +1,24 @@
+{
+  "name": "sx-mqtt-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/ingestor/index.js",
+    "dev": "pino-pretty < src/ingestor/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-sqs": "^3.1040.0",
+    "@aws-sdk/client-timestream-write": "^3.1040.0",
+    "dotenv": "^17.4.2",
+    "mqtt": "^5.15.1",
+    "pino": "^10.3.1"
+  },
+  "devDependencies": {
+    "pino-pretty": "^13.1.3"
+  }
+}

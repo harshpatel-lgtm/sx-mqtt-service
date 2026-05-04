@@ -1,0 +1,38 @@
+# Claude Code local memory
+.claude/
+
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Build / upload artifacts
+uploads/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Archives / raw data
+*.zip
+historicalData/
+ingestion/
+part_process_plan/
+
+# Sequelize
+seeders/*.js
+!seeders/.gitkeep
