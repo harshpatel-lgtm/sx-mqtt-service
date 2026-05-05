@@ -16,7 +16,7 @@ const buffer = new IngestionBuffer(
       logger.info(`[SAFE MODE] Would have written ${batch.length} records to Timestream:`);
       console.log(JSON.stringify(batch, null, 2));
 
-      // await writeToInflux(batch);
+      await writeToInflux(batch);
     } catch (err) {
       // In a more complex setup, we could implement local disk spillover here
       logger.error("Failed to process batch, records might be lost if DLQ failed.");

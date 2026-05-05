@@ -15,24 +15,34 @@ async function writeToInflux(batch) {
 
   try {
     for (const msg of batch) {
-      if (!msg.machine_id) {
-        logger.warn(msg, 'Incomplete record skipped: Missing machine_id');
-        continue;
-      }
-
       const timestamp = msg.timestamp ? new Date(msg.timestamp) : new Date();
+      const machineId = msg.machine_id || 'UNKNOWN_MACHINE';
+      const factoryId = msg.factory_id || 'UNKNOWN_FACTORY';
 
       const point = new Point('cnc_telemetry')
-        .tag('machine_id', String(msg.machine_id))
-        .tag('factory_id', String(msg.factory_id || 'UNKNOWN'))
+        .tag('machine_id', String(machineId))
+        .tag('factory_id', String(factoryId))
         .timestamp(timestamp);
 
       if (msg.spindle_speed !== undefined) point.floatField('spindle_speed', parseFloat(msg.spindle_speed));
+      if (msg.spindle_override !== undefined) point.floatField('spindle_override', parseFloat(msg.spindle_override));
       if (msg.feed_rate !== undefined) point.floatField('feed_rate', parseFloat(msg.feed_rate));
+      if (msg.feed_override !== undefined) point.floatField('feed_override', parseFloat(msg.feed_override));
+      if (msg.tool_number !== undefined) point.floatField('tool_number', parseFloat(msg.tool_number));
+      if (msg.tool_name !== undefined) point.stringField('tool_name', String(msg.tool_name));
+      if (msg.cutting_time !== undefined) point.floatField('cutting_time', parseFloat(msg.cutting_time));
+      if (msg.program_name !== undefined) point.stringField('program_name', String(msg.program_name));
+      if (msg.block_number !== undefined) point.stringField('block_number', String(msg.block_number));
+      if (msg.alarm_active !== undefined) point.floatField('alarm_active', parseFloat(msg.alarm_active));
+      if (msg.program_runtime !== undefined) point.floatField('program_runtime', parseFloat(msg.program_runtime));
       if (msg.axis_x !== undefined) point.floatField('axis_x', parseFloat(msg.axis_x));
       if (msg.axis_y !== undefined) point.floatField('axis_y', parseFloat(msg.axis_y));
       if (msg.axis_z !== undefined) point.floatField('axis_z', parseFloat(msg.axis_z));
+      if (msg.spindle_load !== undefined) point.floatField('spindle_load', parseFloat(msg.spindle_load));
       if (msg.production_count !== undefined) point.floatField('production_count', parseFloat(msg.production_count));
+      if (msg.production_time !== undefined) point.floatField('production_time', parseFloat(msg.production_time));
+      if (msg.machine_state !== undefined) point.floatField('machine_state', parseFloat(msg.machine_state));
+      if (msg.machine_mode !== undefined) point.floatField('machine_mode', parseFloat(msg.machine_mode));
       if (msg.cycle_time !== undefined) point.floatField('cycle_time', parseFloat(msg.cycle_time));
 
       writeApi.writePoint(point);
