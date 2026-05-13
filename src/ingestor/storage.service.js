@@ -18,10 +18,12 @@ async function writeToInflux(batch) {
       const timestamp = msg.timestamp ? new Date(msg.timestamp) : new Date();
       const machineId = msg.machine_id || 'UNKNOWN_MACHINE';
       const factoryId = msg.factory_id || 'UNKNOWN_FACTORY';
+      const programName = msg.program_name || 'UNKNOWN_PROGRAM';
 
       const point = new Point('cnc_telemetry')
         .tag('machine_id', String(machineId))
         .tag('factory_id', String(factoryId))
+        .tag('program_name', String(programName))
         .timestamp(timestamp);
 
       if (msg.spindle_speed !== undefined) point.floatField('spindle_speed', parseFloat(msg.spindle_speed));
@@ -31,7 +33,7 @@ async function writeToInflux(batch) {
       if (msg.tool_number !== undefined) point.floatField('tool_number', parseFloat(msg.tool_number));
       if (msg.tool_name !== undefined) point.stringField('tool_name', String(msg.tool_name));
       if (msg.cutting_time !== undefined) point.floatField('cutting_time', parseFloat(msg.cutting_time));
-      if (msg.program_name !== undefined) point.stringField('program_name', String(msg.program_name));
+      // if (msg.program_name !== undefined) point.stringField('program_name', String(msg.program_name));
       if (msg.block_number !== undefined) point.stringField('block_number', String(msg.block_number));
       if (msg.alarm_active !== undefined) point.floatField('alarm_active', parseFloat(msg.alarm_active));
       if (msg.program_runtime !== undefined) point.floatField('program_runtime', parseFloat(msg.program_runtime));
@@ -44,6 +46,7 @@ async function writeToInflux(batch) {
       if (msg.machine_state !== undefined) point.floatField('machine_state', parseFloat(msg.machine_state));
       if (msg.machine_mode !== undefined) point.floatField('machine_mode', parseFloat(msg.machine_mode));
       if (msg.cycle_time !== undefined) point.floatField('cycle_time', parseFloat(msg.cycle_time));
+      if (msg.program !== undefined) point.stringField('program', String(msg.program));
 
       writeApi.writePoint(point);
       recordsWritten++;
