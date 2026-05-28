@@ -15,12 +15,14 @@ module.exports = {
   },
   mqtt: {
     brokerUrl: process.env.MQTT_BROKER_URL,
-    topic: process.env.MQTT_TOPIC || 'machines/+/telemetry',
+    topic: process.env.MQTT_TOPIC || 'machines/+/+/telemetry',
+    testTopic: process.env.MQTT_TEST_TOPIC || 'test/#',
     clientId: process.env.MQTT_CLIENT_ID || 'sx-ingestor-service',
   },
   service: {
     batchSize: parseInt(process.env.BATCH_SIZE, 10) || 100,
     batchTimeoutMs: parseInt(process.env.BATCH_TIMEOUT_MS, 10) || 5000,
     logLevel: process.env.LOG_LEVEL || 'info',
+    backendUrl: process.env.BACKEND_URL || 'http://localhost:8000/api/v1',
   }
 };
