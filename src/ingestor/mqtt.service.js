@@ -1,4 +1,5 @@
 const mqtt = require("mqtt");
+const axios = require("axios");
 const config = require("../common/config");
 const logger = require("../common/logger");
 const { normalizePayload } = require("./processor");
@@ -64,6 +65,19 @@ function initMQTT(onMessage) {
         const parsed = JSON.parse(rawPayload);
         logger.info('Parsed JSON Payload:');
         console.dir(parsed, { depth: null, colors: true });
+
+        // Forward to backend test ingest API
+        if (parsed.records && Array.isArray(parsed.records)) {
+          logger.info(`Forwarding test telemetry to backend from topic: ${topic}`);
+          axios.post(`${config.service.backendUrl}/admin/telemetry/test/ingest`, {
+            topic,
+            payload: parsed
+          }).then(res => {
+            logger.info({ status: res.status }, 'Successfully forwarded test telemetry to backend');
+          }).catch(err => {
+            logger.error({ err: err.message, response: err.response?.data }, 'Failed to forward test telemetry to backend');
+          });
+        }
       } catch (err) {
         logger.warn('Test payload is not valid JSON.');
       }
