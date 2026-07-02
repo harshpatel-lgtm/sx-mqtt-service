@@ -16,7 +16,7 @@ module.exports = {
   mqtt: {
     brokerUrl: process.env.MQTT_BROKER_URL,
     topic: process.env.MQTT_TOPIC || 'machines/+/+/telemetry',
-    testTopic: process.env.MQTT_TEST_TOPIC || 'tests/#',
+    testTopic: process.env.MQTT_TEST_TOPIC || 'test/#',
     clientId: process.env.MQTT_CLIENT_ID || 'sx-ingestor-service',
   },
   service: {
