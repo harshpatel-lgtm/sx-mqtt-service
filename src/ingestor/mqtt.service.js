@@ -67,17 +67,17 @@ function initMQTT(onMessage) {
         console.dir(parsed, { depth: null, colors: true });
 
         // Forward to backend test ingest API
-        if (parsed.records && Array.isArray(parsed.records)) {
-          logger.info(`Forwarding test telemetry to backend from topic: ${topic}`);
-          axios.post(`${config.service.backendUrl}/admin/telemetry/test/ingest`, {
-            topic,
-            payload: parsed
-          }).then(res => {
-            logger.info({ status: res.status }, 'Successfully forwarded test telemetry to backend');
-          }).catch(err => {
-            logger.error({ err: err.message, response: err.response?.data }, 'Failed to forward test telemetry to backend');
-          });
-        }
+        // if (parsed.records && Array.isArray(parsed.records)) {
+        //   logger.info(`Forwarding test telemetry to backend from topic: ${topic}`);
+        //   axios.post(`${config.service.backendUrl}/admin/telemetry/test/ingest`, {
+        //     topic,
+        //     payload: parsed
+        //   }).then(res => {
+        //     logger.info({ status: res.status }, 'Successfully forwarded test telemetry to backend');
+        //   }).catch(err => {
+        //     logger.error({ err: err.message, response: err.response?.data }, 'Failed to forward test telemetry to backend');
+        //   });
+        // }
       } catch (err) {
         logger.warn('Test payload is not valid JSON.');
       }
