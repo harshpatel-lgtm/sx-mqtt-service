@@ -23,6 +23,6 @@ module.exports = {
     batchSize: parseInt(process.env.BATCH_SIZE, 10) || 100,
     batchTimeoutMs: parseInt(process.env.BATCH_TIMEOUT_MS, 10) || 5000,
     logLevel: process.env.LOG_LEVEL || 'info',
-    backendUrl: process.env.BACKEND_URL || 'http://localhost:8000/api/v1',
+    backendUrl: process.env.BACKEND_URL || 'http://localhost:3000/api/v1',
   }
 };
