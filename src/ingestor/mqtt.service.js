@@ -66,18 +66,27 @@ function initMQTT(onMessage) {
         logger.info('Parsed JSON Payload:');
         console.dir(parsed, { depth: null, colors: true });
 
-        // Forward to backend test ingest API
-        // if (parsed.records && Array.isArray(parsed.records)) {
-        //   logger.info(`Forwarding test telemetry to backend from topic: ${topic}`);
-        //   axios.post(`${config.service.backendUrl}/admin/telemetry/test/ingest`, {
-        //     topic,
-        //     payload: parsed
-        //   }).then(res => {
-        //     logger.info({ status: res.status }, 'Successfully forwarded test telemetry to backend');
-        //   }).catch(err => {
-        //     logger.error({ err: err.message, response: err.response?.data }, 'Failed to forward test telemetry to backend');
-        //   });
-        // }
+        // Forward to backend test ingest API — but only if there are meaningful records
+        if (parsed.records && Array.isArray(parsed.records)) {
+          // Filter out records whose `record` field is an empty array []
+          const meaningfulRecords = parsed.records.filter(
+            r => Array.isArray(r.record) && r.record.length > 0
+          );
+
+          if (meaningfulRecords.length === 0) {
+            logger.warn(`[TEST] All ${parsed.records.length} record(s) have empty record[] — skipping backend API call for topic: ${topic}`);
+          } else {
+            logger.info(`[TEST] Forwarding ${meaningfulRecords.length} of ${parsed.records.length} record(s) to backend from topic: ${topic}`);
+            axios.post(`${config.service.backendUrl}/admin/telemetry/test/ingest`, {
+              topic,
+              payload: { ...parsed, records: meaningfulRecords }
+            }).then(res => {
+              logger.info({ status: res.status, ingested: res.data?.ingested }, 'Successfully forwarded test telemetry to backend');
+            }).catch(err => {
+              logger.error({ err: err.message, response: err.response?.data }, 'Failed to forward test telemetry to backend');
+            });
+          }
+        }
       } catch (err) {
         logger.warn('Test payload is not valid JSON.');
       }
